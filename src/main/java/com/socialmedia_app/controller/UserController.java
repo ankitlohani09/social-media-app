@@ -4,7 +4,6 @@ import com.socialmedia_app.dto.UserDTO;
 import com.socialmedia_app.model.Influencer;
 import com.socialmedia_app.model.Feed;
 import com.socialmedia_app.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +13,11 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/getAll")
     public List<UserDTO> getAllUsers() {

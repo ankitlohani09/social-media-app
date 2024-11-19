@@ -8,7 +8,6 @@ import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.repository.SocialMediaRepository;
 import com.socialmedia_app.service.SocialMediaService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,11 +17,14 @@ import java.util.Optional;
 @Service
 public class SocialMediaServiceImpl implements SocialMediaService {
 
-    @Autowired
-    private SocialMediaRepository socialMediaRepository;
+    private final SocialMediaRepository socialMediaRepository;
 
-    @Autowired
-    private InfluencerRepository influencerRepository;
+    private final InfluencerRepository influencerRepository;
+
+    public SocialMediaServiceImpl(SocialMediaRepository socialMediaRepository, InfluencerRepository influencerRepository) {
+        this.socialMediaRepository = socialMediaRepository;
+        this.influencerRepository = influencerRepository;
+    }
 
     @Override
     public List<SocialMediaAccountDTO> getAllSocialMediaAccounts() {

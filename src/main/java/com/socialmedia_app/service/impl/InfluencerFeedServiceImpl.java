@@ -7,7 +7,6 @@ import com.socialmedia_app.model.Influencer;
 import com.socialmedia_app.repository.InfluencerFeedRepository;
 import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.service.InfluencerFeedService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,11 +15,14 @@ import java.util.List;
 @Service
 public class InfluencerFeedServiceImpl implements InfluencerFeedService {
 
-    @Autowired
-    private InfluencerRepository influencerRepository;
+    private final InfluencerRepository influencerRepository;
 
-    @Autowired
-    private InfluencerFeedRepository influencerFeedRepository;
+    private final InfluencerFeedRepository influencerFeedRepository;
+
+    public InfluencerFeedServiceImpl(InfluencerRepository influencerRepository, InfluencerFeedRepository influencerFeedRepository) {
+        this.influencerRepository = influencerRepository;
+        this.influencerFeedRepository = influencerFeedRepository;
+    }
 
     @Override
     public FeedDTO createFeed(Long influencerId, FeedDTO feedDTO) {

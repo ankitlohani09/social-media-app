@@ -2,7 +2,6 @@ package com.socialmedia_app.controller;
 
 import com.socialmedia_app.dto.SocialMediaAccountDTO;
 import com.socialmedia_app.service.SocialMediaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,8 +9,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/socialmedia")
 public class SocialMediaController {
-    @Autowired
-    private SocialMediaService socialMediaService;
+
+    private final SocialMediaService socialMediaService;
+
+    public SocialMediaController(SocialMediaService socialMediaService) {
+        this.socialMediaService = socialMediaService;
+    }
 
     @GetMapping("/getAll")
     List<SocialMediaAccountDTO> getAll() {

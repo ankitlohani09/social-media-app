@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InfluencerFeedRepository extends JpaRepository<Feed, Long> {
-//    List<Feed> findByInfluencerIdAndPlatform(Long influencerId, String platform);
+
 }
