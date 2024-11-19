@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "username": "ankitlohani",
+    "email": "ankit@gmail.com",
+    "phone": "1234567890",
+    "password": "test",
+    "followedInfluencers": [
+      {
+        "id": 1,
+        "username": "jannat",
+        "password": "test",
+        "email": "jannat@gmail.com",
+        "feeds": [
+          {
+            "id": 1,
+            "content": "artist",
+            "platform": "ig"
+          }
+        ]
+      }
+    ]
+  }
+]

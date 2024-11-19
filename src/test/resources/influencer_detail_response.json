@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "username": "jannat",
+    "password": "test",
+    "email": "jannat@gmail.com",
+    "feeds": [
+      {
+        "id": 1,
+        "content": "artist",
+        "platform": "ig"
+      }
+    ]
+  }
+]
