@@ -63,7 +63,7 @@ public class UserController {
     @GetMapping("/{userId}/feeds/{platform}")
     public ResponseEntity<List<Feed>> getFeedsByUserAndPlatform(@PathVariable Long userId, @PathVariable String platform) {
         List<Feed> feeds = userService.getFeedsByUserAndPlatform(userId, platform);
-        if (feeds != null) {
+        if (!feeds.isEmpty()) {
             return ResponseEntity.ok(feeds);
         }
         return ResponseEntity.noContent().build();

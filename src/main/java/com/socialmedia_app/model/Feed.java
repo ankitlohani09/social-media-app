@@ -17,7 +17,6 @@ public class Feed {
     private Long id;
     private String content;
     private String platform;
-
-//    @OneToMany
-//    private List<Influencer> influencersFeed;
+    @OneToOne
+    private Influencer influencer;
 }
