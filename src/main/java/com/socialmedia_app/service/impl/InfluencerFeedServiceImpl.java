@@ -9,7 +9,6 @@ import com.socialmedia_app.repository.InfluencerFeedRepository;
 import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.service.InfluencerFeedService;
 import com.socialmedia_app.utils.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,14 +18,11 @@ public class InfluencerFeedServiceImpl implements InfluencerFeedService {
 
     private final InfluencerFeedRepository influencerFeedRepository;
 
-    public InfluencerFeedServiceImpl(InfluencerRepository influencerRepository, InfluencerFeedRepository influencerFeedRepository) {
-        this.influencerRepository = influencerRepository;
-        this.influencerFeedRepository = influencerFeedRepository;
-    }
-
     private final SocialMediaServiceImpl socialMediaServiceImpl;
 
-    public InfluencerFeedServiceImpl(SocialMediaServiceImpl socialMediaServiceImpl) {
+    public InfluencerFeedServiceImpl(InfluencerRepository influencerRepository, InfluencerFeedRepository influencerFeedRepository, SocialMediaServiceImpl socialMediaServiceImpl) {
+        this.influencerRepository = influencerRepository;
+        this.influencerFeedRepository = influencerFeedRepository;
         this.socialMediaServiceImpl = socialMediaServiceImpl;
     }
 
@@ -42,9 +38,11 @@ public class InfluencerFeedServiceImpl implements InfluencerFeedService {
             Feed feed = new Feed();
             feed.setContent(feedDTO.getContent());
             feed.setPlatform(feedDTO.getPlatform());
+            feed.setInfluencer(influencer);
             influencer.getFeeds().add(feed);
             influencerFeedRepository.save(feed);
             feedDTO.setId(feed.getId());
+            feedDTO.setInfluencer(influencer);
             return feedDTO;
         } else {
             throw new IllegalArgumentException("invalid platform");
@@ -60,13 +58,13 @@ public class InfluencerFeedServiceImpl implements InfluencerFeedService {
     private void validatePlatformAccess(SocialMediaAccountDTO socialMediaAcc, FeedDTO feedDTO) {
         String platform = feedDTO.getPlatform();
         if (!socialMediaAcc.isFacebookAc() && platform.equalsIgnoreCase(Constants.FACEBOOK)) {
-            throw new RuntimeException("influencer feed cannot be created, because Facebook Account not created");
+            throw new NoDataFoundException("influencer feed cannot be created, because Facebook Account not found");
         }
         if (!socialMediaAcc.isTwitterAc() && platform.equalsIgnoreCase(Constants.TWITTER)) {
-            throw new RuntimeException("influencer feed cannot be created, because Twitter Account not created");
+            throw new NoDataFoundException("influencer feed cannot be created, because Twitter Account not found");
         }
         if (!socialMediaAcc.isInstagramAc() && platform.equalsIgnoreCase(Constants.INSTAGRAM)) {
-            throw new RuntimeException("influencer feed cannot be created, because Instagram Account not created");
+            throw new NoDataFoundException("influencer feed cannot be created, because Instagram Account not found");
         }
     }
 }
