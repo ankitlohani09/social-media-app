@@ -22,6 +22,6 @@ public class Influencer {
     private String password;
     private String email;
 
-    @OneToMany
+    @OneToMany(mappedBy = "influencer")
     private List<Feed> feeds;
 }

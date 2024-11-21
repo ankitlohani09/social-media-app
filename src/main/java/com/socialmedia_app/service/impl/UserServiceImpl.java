@@ -30,15 +30,12 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, InfluencerRepository influencerRepository, PasswordEncoder passwordEncoder) {
+    private final SocialMediaServiceImpl socialMediaServiceImpl;
+
+    public UserServiceImpl(UserRepository userRepository, InfluencerRepository influencerRepository, PasswordEncoder passwordEncoder, SocialMediaServiceImpl socialMediaServiceImpl) {
         this.userRepository = userRepository;
         this.influencerRepository = influencerRepository;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    private final SocialMediaServiceImpl socialMediaServiceImpl;
-
-    public UserServiceImpl(SocialMediaServiceImpl socialMediaServiceImpl) {
         this.socialMediaServiceImpl = socialMediaServiceImpl;
     }
 
@@ -156,23 +153,18 @@ public class UserServiceImpl implements UserService {
     public List<Feed> getFeedsByUserAndPlatform(Long userId, String platform) {
         User user = getUserFromDbByUserID(userId);
         List<Feed> feeds = new ArrayList<>();
-        if (user != null) {
-            List<Influencer> followedInfluencers = user.getFollowedInfluencers();
-            if (followedInfluencers.isEmpty()) {
-                throw new NoDataFoundException("User Not followed influencers");
-            }
-            for (Influencer influencer : followedInfluencers) {
-                if (isInfluencerActiveOnPlatform(influencer, platform)) {
-                    for (Feed feed : influencer.getFeeds()) {
-                        if (feed.getPlatform().equalsIgnoreCase(platform)) {
-                            feeds.add(feed);
-                        }
+        List<Influencer> followedInfluencers = user.getFollowedInfluencers();
+        if (followedInfluencers.isEmpty()) {
+            throw new NoDataFoundException("User Not followed influencers");
+        }
+        for (Influencer influencer : followedInfluencers) {
+            if (isInfluencerActiveOnPlatform(influencer, platform)) {
+                for (Feed feed : influencer.getFeeds()) {
+                    if (feed.getPlatform().equalsIgnoreCase(platform)) {
+                        feeds.add(feed);
                     }
                 }
             }
-        }
-        if (user == null) {
-            throw new UserNotFoundException("User Not Found");
         }
         return feeds;
     }

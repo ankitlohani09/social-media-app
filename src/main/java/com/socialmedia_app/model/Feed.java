@@ -1,5 +1,6 @@
 package com.socialmedia_app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class Feed {
     private Long id;
     private String content;
     private String platform;
-    @OneToOne
+    @ManyToOne
+    @JsonIgnore
     private Influencer influencer;
 }
