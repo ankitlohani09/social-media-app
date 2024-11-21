@@ -40,12 +40,19 @@ public class SocialMediaServiceImpl implements SocialMediaService {
 
     @Override
     public SocialMediaAccountDTO getSocialMediaAccByInfluencerId(Long influencerId) {
-        Optional<SocialMediaAccount> socialMediaAccount = socialMediaRepository.findByInfluencerId(influencerId);
-        if (socialMediaAccount.isEmpty()) {
+        Optional<SocialMediaAccount> socialMediaAccountOpt = socialMediaRepository.findByInfluencerId(influencerId);
+        SocialMediaAccount socialMediaAccount;
+        if (socialMediaAccountOpt.isEmpty()) {
             throw new NoDataFoundException("Social media account not found for this influencer");
+        } else {
+            socialMediaAccount = socialMediaAccountOpt.get();
         }
         SocialMediaAccountDTO socialMediaAccountDTO = new SocialMediaAccountDTO();
-        BeanUtils.copyProperties(socialMediaAccount, socialMediaAccountDTO);
+        socialMediaAccountDTO.setId(socialMediaAccount.getId());
+        socialMediaAccountDTO.setFacebookAc(socialMediaAccount.isFacebookAc());
+        socialMediaAccountDTO.setTwitterAc(socialMediaAccount.isTwitterAc());
+        socialMediaAccountDTO.setInstagramAc(socialMediaAccount.isInstagramAc());
+        socialMediaAccountDTO.setInfluencer(socialMediaAccount.getInfluencer());
         return socialMediaAccountDTO;
     }
 
