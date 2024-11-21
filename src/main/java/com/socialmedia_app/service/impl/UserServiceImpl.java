@@ -14,23 +14,27 @@ import com.socialmedia_app.repository.UserRepository;
 import com.socialmedia_app.service.UserService;
 import com.socialmedia_app.utils.Constants;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private InfluencerRepository influencerRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final InfluencerRepository influencerRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(UserRepository userRepository, InfluencerRepository influencerRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.influencerRepository = influencerRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     private final SocialMediaServiceImpl socialMediaServiceImpl;
 
@@ -81,31 +85,32 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         UserDTO userResponseDTO = new UserDTO();
-        User userEntity = userRepository.findById(id).orElse(null);
-        if (userEntity != null) {
-            userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-            BeanUtils.copyProperties(userDTO,userEntity);
-            this.userRepository.save(userEntity);
-            BeanUtils.copyProperties(userEntity,userResponseDTO);
-            return userResponseDTO;
-        } else {
-            throw new UserNotFoundException("User not found with this id "+ id);
-        }
+        User userEntity = getUserFromDbByUserID(id);
+        userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        BeanUtils.copyProperties(userDTO,userEntity);
+        this.userRepository.save(userEntity);
+        BeanUtils.copyProperties(userEntity,userResponseDTO);
+        return userResponseDTO;
     }
 
     @Override
     public void deleteUser(Long id) {
-        User existUser = userRepository.findById(id).get();
-        if (existUser == null) {
-            throw new UserNotFoundException("User not found with this id "+ id);
+        User user = getUserFromDbByUserID(id);
+        userRepository.delete(user);
+    }
+
+    private User getUserFromDbByUserID(Long userId) {
+        Optional<User> optUser = userRepository.findById(userId);
+        if (optUser.isEmpty()) {
+            throw new UserNotFoundException("User not found with this id "+ userId);
         }
-        userRepository.delete(existUser);
+        return optUser.get();
     }
 
     @Override
     public UserDTO unFollowInfluencer(Long userId, Long influencerId) {
         UserDTO userResponseDTO = new UserDTO();
-        User user = userRepository.findById(userId).orElse(null);
+        User user = getUserFromDbByUserID(userId);
         Influencer influencer = influencerRepository.findById(influencerId).orElse(null);
         List<Influencer> followedInfluencers = user.getFollowedInfluencers();
         if (followedInfluencers != null) {
@@ -119,7 +124,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO followInfluencer(Long userId, Long influencerId) {
         UserDTO userResponseDTO = new UserDTO();
-        User user = userRepository.findById(userId).orElse(null);
+        User user = getUserFromDbByUserID(userId);
         Influencer influencer = influencerRepository.findById(influencerId).orElse(null);
         List<Influencer> followedInfluencers = user.getFollowedInfluencers();
         if (followedInfluencers == null) {
@@ -138,22 +143,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Influencer> getFollowedInfluencers(Long userId) {
-        User user = userRepository.findById(userId).orElse(null);
-        if (user != null) {
-            List<Influencer> followedInfluencers = user.getFollowedInfluencers();
-            if (followedInfluencers.isEmpty()) {
-                throw new NoDataFoundException("User Not followed influencers");
-            } else {
-                return followedInfluencers;
-            }
+        User user = getUserFromDbByUserID(userId);
+        List<Influencer> followedInfluencers = user.getFollowedInfluencers();
+        if (followedInfluencers.isEmpty()) {
+            throw new NoDataFoundException("User Not followed influencers");
         } else {
-            throw new UserNotFoundException("User Not Found");
+            return followedInfluencers;
         }
     }
 
     @Override
     public List<Feed> getFeedsByUserAndPlatform(Long userId, String platform) {
-        User user = userRepository.findById(userId).orElse(null);
+        User user = getUserFromDbByUserID(userId);
         List<Feed> feeds = new ArrayList<>();
         if (user != null) {
             List<Influencer> followedInfluencers = user.getFollowedInfluencers();
@@ -164,7 +165,6 @@ public class UserServiceImpl implements UserService {
                 if (isInfluencerActiveOnPlatform(influencer, platform)) {
                     for (Feed feed : influencer.getFeeds()) {
                         if (feed.getPlatform().equalsIgnoreCase(platform)) {
-//                            feed.setInfluencer(influencer);
                             feeds.add(feed);
                         }
                     }

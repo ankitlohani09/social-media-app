@@ -4,7 +4,6 @@ import com.socialmedia_app.dto.FeedDTO;
 import com.socialmedia_app.dto.InfluencerDTO;
 import com.socialmedia_app.service.InfluencerFeedService;
 import com.socialmedia_app.service.InfluencerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +13,14 @@ import java.util.List;
 @RequestMapping("/influencer")
 public class InfluencerController {
 
-    @Autowired
-    private InfluencerService influencerService;
+    private final InfluencerService influencerService;
 
-    @Autowired
-    private InfluencerFeedService influencerFeedService;
+    private final InfluencerFeedService influencerFeedService;
+
+    public InfluencerController(InfluencerService influencerService, InfluencerFeedService influencerFeedService) {
+        this.influencerService = influencerService;
+        this.influencerFeedService = influencerFeedService;
+    }
 
     @GetMapping("/getAll")
     public List<InfluencerDTO> getAllInfluencers() {

@@ -15,11 +15,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class InfluencerFeedServiceImpl implements InfluencerFeedService {
 
-    @Autowired
-    private InfluencerRepository influencerRepository;
+    private final InfluencerRepository influencerRepository;
 
-    @Autowired
-    private InfluencerFeedRepository influencerFeedRepository;
+    private final InfluencerFeedRepository influencerFeedRepository;
+
+    public InfluencerFeedServiceImpl(InfluencerRepository influencerRepository, InfluencerFeedRepository influencerFeedRepository) {
+        this.influencerRepository = influencerRepository;
+        this.influencerFeedRepository = influencerFeedRepository;
+    }
 
     private final SocialMediaServiceImpl socialMediaServiceImpl;
 

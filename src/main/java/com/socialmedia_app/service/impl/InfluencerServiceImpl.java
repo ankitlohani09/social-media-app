@@ -5,7 +5,6 @@ import com.socialmedia_app.model.Influencer;
 import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.service.InfluencerService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,8 +13,11 @@ import java.util.List;
 @Service
 public class InfluencerServiceImpl implements InfluencerService {
 
-    @Autowired
-    private InfluencerRepository influencerRepository;
+    private final InfluencerRepository influencerRepository;
+
+    public InfluencerServiceImpl(InfluencerRepository influencerRepository) {
+        this.influencerRepository = influencerRepository;
+    }
 
     @Override
     public List<InfluencerDTO> getAllInfluencers() {
