@@ -1,5 +1,6 @@
 package com.socialmedia_app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,5 +24,6 @@ public class Influencer {
     private String email;
 
     @OneToMany(mappedBy = "influencer")
+    @JsonIgnore
     private List<Feed> feeds;
 }

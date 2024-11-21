@@ -18,6 +18,8 @@ public class Feed {
     private Long id;
     private String content;
     private String platform;
+
+    private String influencerName;
     @ManyToOne
     @JsonIgnore
     private Influencer influencer;

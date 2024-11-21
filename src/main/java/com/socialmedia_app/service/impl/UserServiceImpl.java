@@ -1,6 +1,5 @@
 package com.socialmedia_app.service.impl;
 
-import com.socialmedia_app.dto.SocialMediaAccountDTO;
 import com.socialmedia_app.dto.UserDTO;
 import com.socialmedia_app.exception.DataAlreadyExistException;
 import com.socialmedia_app.exception.NoDataFoundException;
@@ -12,7 +11,6 @@ import com.socialmedia_app.model.Feed;
 import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.repository.UserRepository;
 import com.socialmedia_app.service.UserService;
-import com.socialmedia_app.utils.Constants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,13 +28,10 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final SocialMediaServiceImpl socialMediaServiceImpl;
-
-    public UserServiceImpl(UserRepository userRepository, InfluencerRepository influencerRepository, PasswordEncoder passwordEncoder, SocialMediaServiceImpl socialMediaServiceImpl) {
+    public UserServiceImpl(UserRepository userRepository, InfluencerRepository influencerRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.influencerRepository = influencerRepository;
         this.passwordEncoder = passwordEncoder;
-        this.socialMediaServiceImpl = socialMediaServiceImpl;
     }
 
     @Override
@@ -158,30 +153,14 @@ public class UserServiceImpl implements UserService {
             throw new NoDataFoundException("User Not followed influencers");
         }
         for (Influencer influencer : followedInfluencers) {
-            if (isInfluencerActiveOnPlatform(influencer, platform)) {
                 for (Feed feed : influencer.getFeeds()) {
                     if (feed.getPlatform().equalsIgnoreCase(platform)) {
+                        feed.setInfluencer(influencer);
+                        feed.setInfluencerName(influencer.getUsername());
                         feeds.add(feed);
                     }
                 }
-            }
         }
         return feeds;
-    }
-
-    private boolean isInfluencerActiveOnPlatform(Influencer influencer, String selectedPlatform) {
-        SocialMediaAccountDTO account = socialMediaServiceImpl.getSocialMediaAccByInfluencerId(influencer.getId());
-        if (selectedPlatform.equalsIgnoreCase(Constants.FACEBOOK)) {
-            return account.isFacebookAc();
-        } else if (selectedPlatform.equalsIgnoreCase(Constants.TWITTER)) {
-            if (!account.isTwitterAc()) {
-                throw new NoDataFoundException("Twitter Account Not Found for this influencer: "+influencer.getId());
-            }
-            return true;
-        } else if (selectedPlatform.equalsIgnoreCase(Constants.INSTAGRAM)) {
-            return account.isInstagramAc();
-        } else {
-            throw new IllegalArgumentException("Please type valid or full platform name. Unsupported platform: "+selectedPlatform);
-        }
     }
 }

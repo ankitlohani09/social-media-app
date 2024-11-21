@@ -8,5 +8,6 @@ public class FeedDTO {
     private Long id;
     private String content;
     private String platform;
+    private String influencerName;
     private Influencer influencer;
 }

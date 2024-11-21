@@ -38,6 +38,7 @@ public class InfluencerFeedServiceImpl implements InfluencerFeedService {
             Feed feed = new Feed();
             feed.setContent(feedDTO.getContent());
             feed.setPlatform(feedDTO.getPlatform());
+            feed.setInfluencerName(influencer.getUsername());
             feed.setInfluencer(influencer);
             influencer.getFeeds().add(feed);
             influencerFeedRepository.save(feed);
