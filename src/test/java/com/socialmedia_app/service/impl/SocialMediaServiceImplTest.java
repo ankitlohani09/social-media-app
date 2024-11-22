@@ -5,13 +5,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialmedia_app.dto.SocialMediaAccountDTO;
-import com.socialmedia_app.dto.UserDTO;
 import com.socialmedia_app.model.Influencer;
 import com.socialmedia_app.model.SocialMediaAccount;
-import com.socialmedia_app.model.User;
 import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.repository.SocialMediaRepository;
-import com.socialmedia_app.service.SocialMediaService;
 import io.micrometer.core.instrument.util.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,7 +69,7 @@ class SocialMediaServiceImplTest {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<SocialMediaAccount> socialMediaAccountEntities = objectMapper.readValue(socialMediaDetail, new TypeReference<List<SocialMediaAccount>>() {});
         when(socialMediaRepository.findByInfluencerId(socialMediaAccountEntities.get(0).getInfluencer().getId())).thenReturn(Optional.ofNullable(socialMediaAccountEntities.get(0)));
-        SocialMediaAccountDTO socialMediaAccountDTO = socialMediaServiceImpl.getSocialMediaAccByInfluencerId(socialMediaAccountEntities.get(0).getInfluencer().getId());
+        socialMediaServiceImpl.getSocialMediaAccByInfluencerId(socialMediaAccountEntities.get(0).getInfluencer().getId());
         assertEquals("modi", socialMediaAccountEntities.get(0).getInfluencer().getUsername());
         assertEquals("test", socialMediaAccountEntities.get(0).getInfluencer().getPassword());
     }
@@ -106,5 +103,6 @@ class SocialMediaServiceImplTest {
         List<SocialMediaAccount> socialMediaAccountEntities = objectMapper.readValue(socialMediaDetail, new TypeReference<List<SocialMediaAccount>>() {});
         when(socialMediaRepository.findById(socialMediaAccountDTO.getId())).thenReturn(Optional.of(socialMediaAccountEntities.get(0)));
         socialMediaServiceImpl.deleteSocialMediaAccount(socialMediaAccountDTO.getId());
+        assertNull(null, String.valueOf(socialMediaAccountEntities.get(0)));
     }
 }

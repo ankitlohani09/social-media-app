@@ -54,7 +54,7 @@ class UserServiceImplTestFailureTest {
         userDTO.setEmail("suraj@gmail.com");
         userDTO.setPhone("1234567890");
 
-        Influencer influencer = new Influencer();
+        influencer = new Influencer();
         influencer.setId(1L);
         influencer.setUsername("influencerOye");
         influencer.setPassword("oye");
@@ -78,8 +78,9 @@ class UserServiceImplTestFailureTest {
     void updateUser() throws Exception {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<User> userDetailEntities = objectMapper.readValue(userDetail, new TypeReference<List<User>>() {});
+        Long userDtoId = userDTO.getId();
         assertThrows(RuntimeException.class, () -> {
-            userService.updateUser(userDTO.getId(), userDTO);
+            userService.updateUser(userDtoId, userDTO);
         });
         assertEquals("ankitlohani", userDetailEntities.get(0).getUsername());
         assertEquals("test", userDetailEntities.get(0).getPassword());
@@ -92,9 +93,7 @@ class UserServiceImplTestFailureTest {
         List<Influencer> influencerDetailEntities = objectMapper.readValue(influencerDetail, new TypeReference<List<Influencer>>() {});
         Influencer influencer1 = influencerDetailEntities.get(0);
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userDetailEntities.get(0)));
-//        when(influencerRepository.findById(influencer.getId())).thenReturn(Optional.of(influencerDetailEntities.get(0)));
-
-        UserDTO userDetailResponse = userService.unFollowInfluencer(userDTO.getId(), influencer1.getId());
+        userService.unFollowInfluencer(userDTO.getId(), influencer1.getId());
         assertEquals("ankitlohani", userDetailEntities.get(0).getUsername());
         assertEquals("test", userDetailEntities.get(0).getPassword());
     }
@@ -107,8 +106,7 @@ class UserServiceImplTestFailureTest {
         Influencer influencer1 = influencerDetailEntities.get(0);
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userDetailEntities.get(0)));
         when(influencerRepository.findById(influencer.getId())).thenReturn(Optional.of(influencerDetailEntities.get(0)));
-
-        UserDTO userDetailResponse = userService.followInfluencer(userDTO.getId(), influencer1.getId());
+        userService.followInfluencer(userDTO.getId(), influencer1.getId());
         assertEquals("ankitlohani", userDetailEntities.get(0).getUsername());
         assertEquals("test", userDetailEntities.get(0).getPassword());
     }
@@ -117,9 +115,9 @@ class UserServiceImplTestFailureTest {
     void getFollowedInfluencers() throws Exception {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<User> userDetailEntities = objectMapper.readValue(userDetail, new TypeReference<List<User>>() {});
-//        when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userDetailEntities.get(0)));
+        Long userDtoId = userDTO.getId();
         assertThrows(RuntimeException.class, () -> {
-            userService.getFollowedInfluencers(userDTO.getId());
+            userService.getFollowedInfluencers(userDtoId);
         });
         assertEquals("ankitlohani", userDetailEntities.get(0).getUsername());
         assertEquals("test", userDetailEntities.get(0).getPassword());

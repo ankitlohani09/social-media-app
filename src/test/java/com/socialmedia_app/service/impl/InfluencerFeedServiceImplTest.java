@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialmedia_app.dto.FeedDTO;
+import com.socialmedia_app.dto.SocialMediaAccountDTO;
 import com.socialmedia_app.model.Feed;
 import com.socialmedia_app.model.Influencer;
 import com.socialmedia_app.repository.InfluencerFeedRepository;
@@ -32,9 +33,13 @@ class InfluencerFeedServiceImplTest {
     @Mock
     private InfluencerRepository influencerRepository;
     @Mock
+    private SocialMediaServiceImpl socialMediaServiceImpl;
+    @Mock
     private ModelMapper modelMapper;
     @Mock
     private FeedDTO feedDTO;
+    @Mock
+    private SocialMediaAccountDTO  socialMediaAccountDTO;
 
     private String feedDetail;
     private String influencerDetail;
@@ -45,7 +50,13 @@ class InfluencerFeedServiceImplTest {
         feedDTO = new FeedDTO();
         feedDTO.setId(1L);
         feedDTO.setContent("img");
-        feedDTO.setPlatform("fb");
+        feedDTO.setPlatform("facebook");
+
+        socialMediaAccountDTO = new SocialMediaAccountDTO();
+        socialMediaAccountDTO.setId(1L);
+        socialMediaAccountDTO.setFacebookAc(true);
+        socialMediaAccountDTO.setTwitterAc(true);
+        socialMediaAccountDTO.setInstagramAc(true);
 
         feedDetail = IOUtils.toString(this.getClass().getClassLoader()
                 .getResourceAsStream("feed_detail_response.json"), StandardCharsets.UTF_8);
@@ -58,10 +69,12 @@ class InfluencerFeedServiceImplTest {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<Feed> feedList = objectMapper.readValue(feedDetail, new TypeReference<List<Feed>>() {});
         List<Influencer> influencerDetailEntities = objectMapper.readValue(influencerDetail, new TypeReference<List<Influencer>>() {});
+        influencerDetailEntities.get(0).setFeeds(feedList);
         when(influencerRepository.findById(influencerDetailEntities.get(0).getId())).thenReturn(Optional.ofNullable(influencerDetailEntities.get(0)));
+        when(socialMediaServiceImpl.getSocialMediaAccByInfluencerId(influencerDetailEntities.get(0).getId())).thenReturn(socialMediaAccountDTO);
         when(influencerFeedRepository.save(feedList.get(0))).thenReturn(feedList.get(0));
         FeedDTO feedDetailResponse = influencerServiceImpl.createFeed(influencerDetailEntities.get(0).getId(),feedDTO);
-        assertEquals("fb", feedDetailResponse.getPlatform());
+        assertEquals("facebook", feedDetailResponse.getPlatform());
         assertEquals("img", feedDetailResponse.getContent());
     }
 }
