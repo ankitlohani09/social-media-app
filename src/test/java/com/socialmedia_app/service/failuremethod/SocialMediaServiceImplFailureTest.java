@@ -27,7 +27,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class SocialMediaServiceImplFailureTest {
+class SocialMediaServiceImplFailureTest {
     @InjectMocks
     private SocialMediaServiceImpl socialMediaServiceImpl;
     @Spy
@@ -64,9 +64,10 @@ public class SocialMediaServiceImplFailureTest {
     void getSocialMediaAccByInfluencerIdFailure() throws JsonProcessingException {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<SocialMediaAccount> socialMediaAccountEntities = objectMapper.readValue(socialMediaDetail, new TypeReference<List<SocialMediaAccount>>() {});
-        assertThrows(NoDataFoundException.class, () -> {
-            socialMediaAccountDTO = socialMediaServiceImpl.getSocialMediaAccByInfluencerId(socialMediaAccountEntities.get(0).getInfluencer().getId());
-        });
+        Long influencerId = socialMediaAccountEntities.get(0).getInfluencer().getId();
+        assertThrows(NoDataFoundException.class, () ->
+                socialMediaServiceImpl.getSocialMediaAccByInfluencerId(influencerId)
+        );
         if (socialMediaAccountDTO != null) {
           assertEquals("influencerOye", socialMediaAccountDTO.getInfluencer().getUsername());
             assertEquals("test", socialMediaAccountEntities.get(0).getInfluencer().getPassword());
@@ -88,7 +89,6 @@ public class SocialMediaServiceImplFailureTest {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<SocialMediaAccount> socialMediaAccountEntities = objectMapper.readValue(socialMediaDetail, new TypeReference<List<SocialMediaAccount>>() {});
-//        when(influencerRepository.findById(socialMediaAccountEntities.get(0).getInfluencer().getId())).thenReturn(Optional.ofNullable(socialMediaAccountEntities.get(0).getInfluencer()));
         when(socialMediaRepository.findById(socialMediaAccountEntities.get(0).getInfluencer().getId())).thenReturn(Optional.ofNullable(socialMediaAccountEntities.get(0)));
         when(socialMediaRepository.save(socialMediaAccountEntities.get(0))).thenReturn(socialMediaAccountEntities.get(0));
         socialMediaServiceImpl.updateSocialMediaAccount(socialMediaAccountEntities.get(0).getInfluencer().getId(), socialMediaAccountDTO);

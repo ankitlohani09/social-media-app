@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 class InfluencerServiceImplTest {
@@ -46,7 +47,6 @@ class InfluencerServiceImplTest {
         influencerDTO.setUsername("mohini");
         influencerDTO.setEmail("mohini@gmail.com");
         influencerDTO.setPassword("mohini");
-//        influencerDTO.setFeeds();
 
         influencerDetail = IOUtils.toString(this.getClass().getClassLoader()
                 .getResourceAsStream("influencer_detail_response.json"), StandardCharsets.UTF_8);
@@ -80,12 +80,12 @@ class InfluencerServiceImplTest {
         influencer.setEmail("mohini@gmail.com");
         influencer.setPassword("mohini");
 
-        InfluencerDTO influencerDTO = new InfluencerDTO();
+        InfluencerDTO influencerDtoMock = new InfluencerDTO();
         modelMapper.map(influencer, InfluencerDTO.class);
-        BeanUtils.copyProperties(influencer, influencerDTO);
+        BeanUtils.copyProperties(influencer, influencerDtoMock);
 
         when(influencerRepository.save(influencer)).thenReturn(influencer);
-        InfluencerDTO influencerDTO1 = influencerServiceImpl.createInfluencer(influencerDTO);
+        InfluencerDTO influencerDTO1 = influencerServiceImpl.createInfluencer(influencerDtoMock);
         assertEquals("mohini", influencerDTO1.getUsername());
         assertEquals("mohini@gmail.com", influencerDTO1.getEmail());
     }
@@ -107,6 +107,6 @@ class InfluencerServiceImplTest {
         List<Influencer> influencerListEntities = objectMapper.readValue(influencerDetail, new TypeReference<List<Influencer>>() {});
         when(influencerRepository.findById(influencerDTO.getId())).thenReturn(Optional.of(influencerListEntities.get(0)));
         influencerServiceImpl.deleteInfluencer(influencerDTO.getId());
+        assertNull(null, influencerListEntities.get(0).getUsername());
     }
-
 }

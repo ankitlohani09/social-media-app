@@ -17,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.modelmapper.ModelMapper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -62,10 +61,11 @@ class InfluencerFeedServiceImplFailureTest {
         List<Feed> feedList = objectMapper.readValue(feedDetail, new TypeReference<List<Feed>>() {});
         List<Influencer> influencerDetailEntities = objectMapper.readValue(influencerDetail, new TypeReference<List<Influencer>>() {});
         when(influencerFeedRepository.save(feedList.get(0))).thenReturn(feedList.get(0));
+        Long influencerId = influencerDetailEntities.get(0).getId();
         assertThrows(RuntimeException.class, () -> {
-            influencerServiceImpl.createFeed(influencerDetailEntities.get(0).getId(), feedDTO);
+            influencerServiceImpl.createFeed(influencerId, feedDTO);
         });
-        assertEquals("insta",feedList.get(0).getPlatform());
+        assertEquals("instagram",feedList.get(0).getPlatform());
         assertEquals("reel",feedList.get(0).getContent());
     }
 }

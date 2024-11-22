@@ -4,28 +4,6 @@
     "facebookAc": false,
     "twitterAc": true,
     "instagramAc": false,
-    "user": {
-      "id": 1,
-      "username": "viku",
-      "password": "test",
-      "email": "test@gmail.com",
-      "phone": "1234567890",
-      "followedInfluencers": [
-        {
-          "id": 1,
-          "username": "technicalguruji",
-          "password": "test",
-          "email": "guruji@gmail.com",
-          "feeds": [
-            {
-              "id": 1,
-              "content": "img",
-              "platform": "fb"
-            }
-          ]
-        }
-      ]
-    },
     "influencer": {
       "id": 1,
       "username": "modi",
@@ -35,7 +13,7 @@
         {
           "id": 1,
           "content": "reel",
-          "platform": "ig"
+          "platform": "instagram"
         }
       ]
     }

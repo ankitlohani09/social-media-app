@@ -16,13 +16,15 @@ import org.mockito.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-public class UserServiceImplTest {
+class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService;
     @Mock
@@ -37,6 +39,10 @@ public class UserServiceImplTest {
     private UserDTO userDTO;
     @Mock
     private Influencer influencer;
+    @Mock
+    private Feed feedMock;
+    @Mock
+    private List<Feed> feedsMockList;
 
     private String userDetail;
 
@@ -52,11 +58,20 @@ public class UserServiceImplTest {
         userDTO.setEmail("suraj@gmail.com");
         userDTO.setPhone("1234567890");
 
-        Influencer influencer = new Influencer();
+        influencer = new Influencer();
         influencer.setId(1L);
         influencer.setUsername("influencerOye");
         influencer.setPassword("oye");
         influencer.setEmail("influencerOye@gmail.com");
+
+        feedMock = new Feed();
+        feedMock.setId(1L);
+        feedMock.setContent("artist");
+        feedMock.setPlatform("instagram");
+        feedMock.setInfluencerName(influencerDetail);
+
+        feedsMockList = new ArrayList<>();
+        feedsMockList.add(feedMock);
 
         userDetail = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("user_detail_api_response.json"), StandardCharsets.UTF_8);
         influencerDetail = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("influencer_detail_response.json"), StandardCharsets.UTF_8);
@@ -108,6 +123,7 @@ public class UserServiceImplTest {
         List<User> userDetailEntities = objectMapper.readValue(userDetail, new TypeReference<List<User>>() {});
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userDetailEntities.get(0)));
         userService.deleteUser(userDTO.getId());
+        assertNull(null, userDetailEntities.get(0).getUsername());
     }
 
     @Test
@@ -151,9 +167,10 @@ public class UserServiceImplTest {
     void getFeedsByUserAndPlatform() throws Exception {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<User> userDetailEntities = objectMapper.readValue(userDetail, new TypeReference<List<User>>() {});
+        userDetailEntities.get(0).getFollowedInfluencers().get(0).setFeeds(feedsMockList);
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userDetailEntities.get(0)));
-        List<Feed> feedDetails = userService.getFeedsByUserAndPlatform(userDTO.getId(),"ig");
-        assertEquals("ig", feedDetails.get(0).getPlatform());
+        List<Feed> feedDetails = userService.getFeedsByUserAndPlatform(userDTO.getId(),"instagram");
+        assertEquals("instagram", feedDetails.get(0).getPlatform());
         assertEquals(1L, feedDetails.get(0).getId());
     }
 }
