@@ -50,6 +50,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> findUsersByTheme(Theme theme) {
+        return userRepository.findByTheme(theme);
+    }
+
+    @Override
+    public List<User> findUsersByRole(Role role) {
+        return userRepository.findByRole(role);
+    }
+
+    @Override
     public UserDTO getUserByEmail(String email) {
         UserDTO userResponseDTO = new UserDTO();
         User existUser = userRepository.findByEmail(email);
@@ -72,12 +82,13 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());
+        user.setTheme(userDTO.getTheme());
+        user.setRole(userDTO.getRole());
 
         user.setCreatedBy(userDTO.getUsername());
         user.setCreatedDate(LocalDateTime.now());
         user.setLastModifiedBy(userDTO.getUsername());
         user.setLastModifiedDate(LocalDateTime.now());
-
         userRepository.save(user);
         BeanUtils.copyProperties(user, userResponseDTO);
         return userResponseDTO;
@@ -90,10 +101,11 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setPhone(userDTO.getPhone());
+        userEntity.setTheme(userDTO.getTheme());
+        userEntity.setRole(userDTO.getRole());
 
         userEntity.setLastModifiedBy(userDTO.getUsername());
         userEntity.setLastModifiedDate(LocalDateTime.now());
-
         userRepository.save(userEntity);
         BeanUtils.copyProperties(userEntity,userDTO);
         return userDTO;

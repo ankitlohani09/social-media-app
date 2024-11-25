@@ -26,6 +26,10 @@ public class Influencer extends Auditable {
     private String password;
     private String email;
     private boolean isDeleted;
+    @Enumerated(EnumType.STRING)
+    private Theme theme;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(mappedBy = "influencer")
     @JsonIgnore

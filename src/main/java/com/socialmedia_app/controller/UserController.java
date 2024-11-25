@@ -1,8 +1,7 @@
 package com.socialmedia_app.controller;
 
 import com.socialmedia_app.dto.UserDTO;
-import com.socialmedia_app.model.Influencer;
-import com.socialmedia_app.model.Feed;
+import com.socialmedia_app.model.*;
 import com.socialmedia_app.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,18 @@ public class UserController {
     @GetMapping("/getAll")
     public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/byTheme")
+    public ResponseEntity<List<User>> findUsersByTheme(@RequestParam("theme") Theme theme) {
+        List<User> users = userService.findUsersByTheme(theme);
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/byRole")
+    public ResponseEntity<List<User>> findUsersByRole(@RequestParam("role") Role role) {
+        List<User> users = userService.findUsersByRole(role);
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/get")

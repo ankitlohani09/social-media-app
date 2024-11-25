@@ -1,6 +1,8 @@
 package com.socialmedia_app.dto;
 
 import com.socialmedia_app.model.Influencer;
+import com.socialmedia_app.model.Role;
+import com.socialmedia_app.model.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +21,7 @@ public class UserDTO {
     private String email;
     private String phone;
     private boolean isDeleted;
+    private Theme theme;
+    private Role role;
     private List<Influencer> followedInfluencers;
 }

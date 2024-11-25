@@ -2,14 +2,17 @@ package com.socialmedia_app.service;
 
 import com.socialmedia_app.dto.UserDTO;
 import com.socialmedia_app.exception.DataAlreadyExistException;
-import com.socialmedia_app.model.Influencer;
-import com.socialmedia_app.model.Feed;
+import com.socialmedia_app.model.*;
 
 import java.util.List;
 
 public interface UserService {
 
     List<UserDTO> getAllUsers();
+
+    List<User> findUsersByTheme(Theme theme);
+
+    List<User> findUsersByRole(Role role);
 
     UserDTO getUserByEmail(String email);
 
