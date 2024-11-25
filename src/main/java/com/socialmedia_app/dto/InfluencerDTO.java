@@ -11,6 +11,6 @@ public class InfluencerDTO {
     private String username;
     private String password;
     private String email;
-
+    private boolean isDeleted;
     private List<Feed> feeds;
 }
