@@ -1,8 +1,8 @@
 package com.socialmedia_app.dto;
 
 import com.socialmedia_app.model.Influencer;
-import com.socialmedia_app.model.Role;
-import com.socialmedia_app.model.Theme;
+import com.socialmedia_app.utils.Role;
+import com.socialmedia_app.utils.Theme;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,5 +1,7 @@
 package com.socialmedia_app.model;
 
+import com.socialmedia_app.utils.Role;
+import com.socialmedia_app.utils.Theme;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

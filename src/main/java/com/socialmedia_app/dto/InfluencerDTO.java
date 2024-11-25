@@ -1,8 +1,8 @@
 package com.socialmedia_app.dto;
 
 import com.socialmedia_app.model.Feed;
-import com.socialmedia_app.model.Role;
-import com.socialmedia_app.model.Theme;
+import com.socialmedia_app.utils.Role;
+import com.socialmedia_app.utils.Theme;
 import lombok.Data;
 
 import java.util.List;

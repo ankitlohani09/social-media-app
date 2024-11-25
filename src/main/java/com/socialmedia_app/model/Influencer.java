@@ -1,6 +1,8 @@
 package com.socialmedia_app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.socialmedia_app.utils.Role;
+import com.socialmedia_app.utils.Theme;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

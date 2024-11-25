@@ -10,6 +10,8 @@ import com.socialmedia_app.repository.FollowInformationRepo;
 import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.repository.UserRepository;
 import com.socialmedia_app.service.UserService;
+import com.socialmedia_app.utils.Role;
+import com.socialmedia_app.utils.Theme;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -3,6 +3,8 @@ package com.socialmedia_app.controller;
 import com.socialmedia_app.dto.UserDTO;
 import com.socialmedia_app.model.*;
 import com.socialmedia_app.service.UserService;
+import com.socialmedia_app.utils.Role;
+import com.socialmedia_app.utils.Theme;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
