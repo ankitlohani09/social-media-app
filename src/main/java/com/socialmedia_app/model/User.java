@@ -29,6 +29,10 @@ public class User extends Auditable {
     @Size(min = 10, max = 10)
     private String phone;
     private boolean isDeleted;
+    @Enumerated(EnumType.STRING)
+    private Theme theme;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @ManyToMany
     private List<Influencer> followedInfluencers;

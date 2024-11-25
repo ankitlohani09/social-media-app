@@ -44,6 +44,8 @@ public class InfluencerServiceImpl implements InfluencerService {
     public InfluencerDTO createInfluencer(InfluencerDTO influencerDTO) {
         Influencer influencer = new Influencer();
         BeanUtils.copyProperties(influencerDTO, influencer);
+        influencer.setTheme(influencerDTO.getTheme());
+        influencer.setRole(influencerDTO.getRole());
         influencer.setCreatedBy(influencer.getUsername());
         influencer.setCreatedDate(LocalDateTime.now());
         influencer.setLastModifiedBy(influencer.getUsername());
@@ -61,6 +63,8 @@ public class InfluencerServiceImpl implements InfluencerService {
         influencer.setEmail(influencerDTO.getEmail());
         influencer.setUsername(influencerDTO.getUsername());
         influencer.setPassword(influencerDTO.getPassword());
+        influencer.setTheme(influencerDTO.getTheme());
+        influencer.setRole(influencerDTO.getRole());
         influencer.setLastModifiedBy(influencer.getUsername());
         influencer.setLastModifiedDate(LocalDateTime.now());
         this.influencerRepository.save(influencer);
