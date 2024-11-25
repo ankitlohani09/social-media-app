@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.List;
 
@@ -15,6 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_entity")
+@SQLDelete(sql = "UPDATE user_entity SET is_deleted = true WHERE id=?")
+@Where(clause = "is_deleted=false")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +28,7 @@ public class User {
     private String email;
     @Size(min = 10, max = 10)
     private String phone;
+    private boolean isDeleted;
 
     @ManyToMany
     private List<Influencer> followedInfluencers;
