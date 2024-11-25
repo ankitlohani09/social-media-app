@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "user_entity")
 @SQLDelete(sql = "UPDATE user_entity SET is_deleted = true WHERE id=?")
-@Where(clause = "is_deleted=false")
+@SQLRestriction("is_deleted=false")
 public class User extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
