@@ -5,9 +5,11 @@ import com.socialmedia_app.exception.DataAlreadyExistException;
 import com.socialmedia_app.exception.NoDataFoundException;
 import com.socialmedia_app.exception.UserAlreadyExistException;
 import com.socialmedia_app.exception.UserNotFoundException;
+import com.socialmedia_app.model.FollowInformation;
 import com.socialmedia_app.model.Influencer;
 import com.socialmedia_app.model.User;
 import com.socialmedia_app.model.Feed;
+import com.socialmedia_app.repository.FollowInformationRepo;
 import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.repository.UserRepository;
 import com.socialmedia_app.service.UserService;
@@ -15,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,10 +31,13 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, InfluencerRepository influencerRepository, PasswordEncoder passwordEncoder) {
+    private final FollowInformationRepo followInformationRepo;
+
+    public UserServiceImpl(UserRepository userRepository, InfluencerRepository influencerRepository, PasswordEncoder passwordEncoder, FollowInformationRepo followInformationRepo) {
         this.userRepository = userRepository;
         this.influencerRepository = influencerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.followInformationRepo = followInformationRepo;
     }
 
     @Override
@@ -99,13 +105,27 @@ public class UserServiceImpl implements UserService {
         return optUser.get();
     }
 
+    private Influencer getInfluencerFromDbByInfluencerID(Long influencerId) {
+        Influencer influencer = influencerRepository.findById(influencerId).orElse(null);
+        if (influencer == null) {
+            throw new NoDataFoundException("Influencer not found with this id "+ influencerId);
+        } else {
+            return influencer;
+        }
+    }
+
     @Override
     public UserDTO unFollowInfluencer(Long userId, Long influencerId) {
         UserDTO userResponseDTO = new UserDTO();
         User user = getUserFromDbByUserID(userId);
-        Influencer influencer = influencerRepository.findById(influencerId).orElse(null);
+        Influencer influencer = getInfluencerFromDbByInfluencerID(influencerId);
         List<Influencer> followedInfluencers = user.getFollowedInfluencers();
+        if (isUserAlreadyUnFollowInfluencer(userId,influencerId)) {
+            throw new DataAlreadyExistException("User already unfollow this influencer");
+        }
+
         if (followedInfluencers != null) {
+            followInformationOperation(userId, influencerId);
             followedInfluencers.remove(influencer);
         }
         userRepository.save(user);
@@ -117,20 +137,63 @@ public class UserServiceImpl implements UserService {
     public UserDTO followInfluencer(Long userId, Long influencerId) {
         UserDTO userResponseDTO = new UserDTO();
         User user = getUserFromDbByUserID(userId);
-        Influencer influencer = influencerRepository.findById(influencerId).orElse(null);
+        Influencer influencer = getInfluencerFromDbByInfluencerID(influencerId);
         List<Influencer> followedInfluencers = user.getFollowedInfluencers();
         if (followedInfluencers == null) {
             followedInfluencers = new ArrayList<>();
             user.setFollowedInfluencers(followedInfluencers);
         }
-        if (followedInfluencers.contains(influencer)) {
+        if (isUserAlreadyFollowInfluencer(userId,influencerId)) {
             throw new DataAlreadyExistException("User Already followed this influencer");
         } else {
+            followInformationOperation(userId, influencerId);
             followedInfluencers.add(influencer);
             userRepository.save(user);
         }
         BeanUtils.copyProperties(user, userResponseDTO);
         return userResponseDTO;
+    }
+
+    private void followInformationOperation(Long userId, Long influencerId) {
+        User user = getUserFromDbByUserID(userId);
+        Influencer influencer = getInfluencerFromDbByInfluencerID(influencerId);
+
+        FollowInformation existingFollowInfo = followInformationRepo.findByUserFollowNameAndInfluencerFollowName(user.getUsername(), influencer.getUsername());
+
+        if (existingFollowInfo == null) {
+            FollowInformation followInformation = new FollowInformation();
+            followInformation.setUserFollowName(user.getUsername());
+            followInformation.setInfluencerFollowName(influencer.getUsername());
+            followInformation.setFollowed(true);
+            followInformation.setFollowedDateTime(LocalDateTime.now());
+            followInformation.setUpdateFollowDateTime(LocalDateTime.now());
+            followInformationRepo.save(followInformation);
+        }
+        if (existingFollowInfo != null) {
+            boolean followed = existingFollowInfo.isFollowed();
+            if (followed) {
+                existingFollowInfo.setFollowed(false);
+                existingFollowInfo.setUpdateFollowDateTime(LocalDateTime.now());
+                followInformationRepo.save(existingFollowInfo);
+            } else {
+                existingFollowInfo.setFollowed(true);
+                existingFollowInfo.setFollowedDateTime(LocalDateTime.now());
+                existingFollowInfo.setUpdateFollowDateTime(LocalDateTime.now());
+                followInformationRepo.save(existingFollowInfo);
+            }
+        }
+    }
+
+    private boolean isUserAlreadyFollowInfluencer(Long userId, Long influencerId) {
+        User user = getUserFromDbByUserID(userId);
+        Influencer influencer = getInfluencerFromDbByInfluencerID(influencerId);
+        return user.getFollowedInfluencers().contains(influencer);
+    }
+
+    private boolean isUserAlreadyUnFollowInfluencer(Long userId, Long influencerId) {
+        User user = getUserFromDbByUserID(userId);
+        Influencer influencer = getInfluencerFromDbByInfluencerID(influencerId);
+        return !user.getFollowedInfluencers().contains(influencer);
     }
 
     @Override

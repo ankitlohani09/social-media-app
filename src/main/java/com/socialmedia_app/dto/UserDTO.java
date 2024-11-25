@@ -18,5 +18,6 @@ public class UserDTO {
     private String password;
     private String email;
     private String phone;
+    private boolean isDeleted;
     private List<Influencer> followedInfluencers;
 }
