@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Influencer {
+public class Influencer extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

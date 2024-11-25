@@ -7,6 +7,7 @@ import com.socialmedia_app.service.InfluencerService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +44,10 @@ public class InfluencerServiceImpl implements InfluencerService {
     public InfluencerDTO createInfluencer(InfluencerDTO influencerDTO) {
         Influencer influencer = new Influencer();
         BeanUtils.copyProperties(influencerDTO, influencer);
+        influencer.setCreatedBy(influencer.getUsername());
+        influencer.setCreatedDate(LocalDateTime.now());
+        influencer.setLastModifiedBy(influencer.getUsername());
+        influencer.setLastModifiedDate(LocalDateTime.now());
         influencerRepository.save(influencer);
         InfluencerDTO influencerResponseDTO = new InfluencerDTO();
         BeanUtils.copyProperties(influencer, influencerResponseDTO);
@@ -56,6 +61,8 @@ public class InfluencerServiceImpl implements InfluencerService {
         influencer.setEmail(influencerDTO.getEmail());
         influencer.setUsername(influencerDTO.getUsername());
         influencer.setPassword(influencerDTO.getPassword());
+        influencer.setLastModifiedBy(influencer.getUsername());
+        influencer.setLastModifiedDate(LocalDateTime.now());
         this.influencerRepository.save(influencer);
         BeanUtils.copyProperties(influencer, influencerResponseDTO);
         return influencerResponseDTO;
