@@ -5,10 +5,7 @@ import com.socialmedia_app.exception.DataAlreadyExistException;
 import com.socialmedia_app.exception.NoDataFoundException;
 import com.socialmedia_app.exception.UserAlreadyExistException;
 import com.socialmedia_app.exception.UserNotFoundException;
-import com.socialmedia_app.model.FollowInformation;
-import com.socialmedia_app.model.Influencer;
-import com.socialmedia_app.model.User;
-import com.socialmedia_app.model.Feed;
+import com.socialmedia_app.model.*;
 import com.socialmedia_app.repository.FollowInformationRepo;
 import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.repository.UserRepository;
@@ -75,6 +72,12 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());
+
+        user.setCreatedBy(userDTO.getUsername());
+        user.setCreatedDate(LocalDateTime.now());
+        user.setLastModifiedBy(userDTO.getUsername());
+        user.setLastModifiedDate(LocalDateTime.now());
+
         userRepository.save(user);
         BeanUtils.copyProperties(user, userResponseDTO);
         return userResponseDTO;
@@ -82,13 +85,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO updateUser(Long id, UserDTO userDTO) {
-        UserDTO userResponseDTO = new UserDTO();
         User userEntity = getUserFromDbByUserID(id);
+        userEntity.setUsername(userDTO.getUsername());
         userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        BeanUtils.copyProperties(userDTO,userEntity);
-        this.userRepository.save(userEntity);
-        BeanUtils.copyProperties(userEntity,userResponseDTO);
-        return userResponseDTO;
+        userEntity.setEmail(userDTO.getEmail());
+        userEntity.setPhone(userDTO.getPhone());
+
+        userEntity.setLastModifiedBy(userDTO.getUsername());
+        userEntity.setLastModifiedDate(LocalDateTime.now());
+
+        userRepository.save(userEntity);
+        BeanUtils.copyProperties(userEntity,userDTO);
+        return userDTO;
     }
 
     @Override
