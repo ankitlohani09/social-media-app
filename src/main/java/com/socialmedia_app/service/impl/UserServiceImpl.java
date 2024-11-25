@@ -84,8 +84,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setEmail(userDTO.getEmail());
         user.setPhone(userDTO.getPhone());
-        user.setTheme(userDTO.getTheme());
-        user.setRole(userDTO.getRole());
+        user.setRole(defaultRole(userDTO));
+        user.setTheme(defaultTheme(userDTO));
 
         user.setCreatedBy(userDTO.getUsername());
         user.setCreatedDate(LocalDateTime.now());
@@ -103,8 +103,8 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setPhone(userDTO.getPhone());
-        userEntity.setTheme(userDTO.getTheme());
-        userEntity.setRole(userDTO.getRole());
+        userEntity.setRole(defaultRole(userDTO));
+        userEntity.setTheme(defaultTheme(userDTO));
 
         userEntity.setLastModifiedBy(userDTO.getUsername());
         userEntity.setLastModifiedDate(LocalDateTime.now());
@@ -216,6 +216,20 @@ public class UserServiceImpl implements UserService {
         User user = getUserFromDbByUserID(userId);
         Influencer influencer = getInfluencerFromDbByInfluencerID(influencerId);
         return !user.getFollowedInfluencers().contains(influencer);
+    }
+
+    private Role defaultRole(UserDTO userDTO) {
+        if (userDTO.getRole() == null) {
+            userDTO.setRole(Role.USER);
+        }
+        return userDTO.getRole();
+    }
+
+    private Theme defaultTheme(UserDTO userDTO) {
+        if (userDTO.getTheme() == null) {
+            userDTO.setTheme(Theme.LIGHT);
+        }
+        return userDTO.getTheme();
     }
 
     @Override
