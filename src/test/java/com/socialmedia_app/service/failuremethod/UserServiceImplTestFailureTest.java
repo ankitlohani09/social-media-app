@@ -101,8 +101,10 @@ class UserServiceImplTestFailureTest {
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userDetailEntities.get(0)));
         when(followInformationRepo.findByUserFollowNameAndInfluencerFollowName(anyString(), anyString()))
                 .thenReturn(new FollowInformation());
+        Long userDTOId = userDTO.getId();
+        Long influencer1Id = influencer1.getId();
         assertThrows(NoDataFoundException.class, () -> {
-            userService.unFollowInfluencer(userDTO.getId(), influencer1.getId());
+            userService.unFollowInfluencer(userDTOId, influencer1Id);
         });
         assertEquals("ankitlohani", userDetailEntities.get(0).getUsername());
         assertEquals("test", userDetailEntities.get(0).getPassword());
