@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialmedia_app.dto.UserDTO;
+import com.socialmedia_app.exception.NoDataFoundException;
+import com.socialmedia_app.model.FollowInformation;
 import com.socialmedia_app.model.Influencer;
 import com.socialmedia_app.model.User;
+import com.socialmedia_app.repository.FollowInformationRepo;
 import com.socialmedia_app.repository.InfluencerRepository;
 import com.socialmedia_app.repository.UserRepository;
 import com.socialmedia_app.service.impl.UserServiceImpl;
@@ -21,6 +24,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 class UserServiceImplTestFailureTest {
@@ -28,6 +32,8 @@ class UserServiceImplTestFailureTest {
     private UserServiceImpl userService;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private FollowInformationRepo followInformationRepo;
     @Spy
     private ObjectMapper objectMapper;
     @Mock
@@ -93,7 +99,11 @@ class UserServiceImplTestFailureTest {
         List<Influencer> influencerDetailEntities = objectMapper.readValue(influencerDetail, new TypeReference<List<Influencer>>() {});
         Influencer influencer1 = influencerDetailEntities.get(0);
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userDetailEntities.get(0)));
-        userService.unFollowInfluencer(userDTO.getId(), influencer1.getId());
+        when(followInformationRepo.findByUserFollowNameAndInfluencerFollowName(anyString(), anyString()))
+                .thenReturn(new FollowInformation());
+        assertThrows(NoDataFoundException.class, () -> {
+            userService.unFollowInfluencer(userDTO.getId(), influencer1.getId());
+        });
         assertEquals("ankitlohani", userDetailEntities.get(0).getUsername());
         assertEquals("test", userDetailEntities.get(0).getPassword());
     }
@@ -106,6 +116,8 @@ class UserServiceImplTestFailureTest {
         Influencer influencer1 = influencerDetailEntities.get(0);
         when(userRepository.findById(userDTO.getId())).thenReturn(Optional.of(userDetailEntities.get(0)));
         when(influencerRepository.findById(influencer.getId())).thenReturn(Optional.of(influencerDetailEntities.get(0)));
+        when(followInformationRepo.findByUserFollowNameAndInfluencerFollowName(anyString(), anyString()))
+                .thenReturn(new FollowInformation());
         userService.followInfluencer(userDTO.getId(), influencer1.getId());
         assertEquals("ankitlohani", userDetailEntities.get(0).getUsername());
         assertEquals("test", userDetailEntities.get(0).getPassword());
