@@ -148,10 +148,11 @@ class UserServiceImplTest {
         when(influencerRepository.findById(influencer.getId())).thenReturn(Optional.of(influencerDetailEntities.get(0)));
         when(followInformationRepo.findByUserFollowNameAndInfluencerFollowName(anyString(), anyString()))
                 .thenReturn(new FollowInformation());
-
+        Long userDTOId = userDTO.getId();
+        Long influencer1Id = influencer1.getId();
         UserDTO userDetailResponse = new UserDTO();
         assertThrows(DataAlreadyExistException.class, () -> {
-            userService.unFollowInfluencer(userDTO.getId(), influencer1.getId());
+            userService.unFollowInfluencer(userDTOId, influencer1Id);
         });
         assertNull(userDetailResponse.getUsername());
         assertNull(userDetailResponse.getPassword());
